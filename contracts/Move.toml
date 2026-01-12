@@ -1,0 +1,15 @@
+[package]
+name = "yudiswap"
+version = "1.0.0"
+authors = []
+
+[addresses]
+yudiswap = "_"
+
+[dev-addresses]
+yudiswap = "0xcafe"
+
+[dependencies.SupraFramework]
+git = "https://github.com/supra-labs/supra-framework.git"
+subdir = "supra-framework"
+rev = "mainnet"
