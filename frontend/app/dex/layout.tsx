@@ -1,12 +1,10 @@
+"use client";
+
 import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
+import WalletConnect from "@/components/WalletConnect";
 import { Zap } from "lucide-react";
 import "./dex.css";
-
-export const metadata = {
-    title: "Swap | YudiSwap DEX",
-    description: "Swap tokens instantly on Supra Network with ultra-low fees.",
-};
 
 export default function DexLayout({
     children,
@@ -26,19 +24,11 @@ export default function DexLayout({
 
                     <div className="navbar-actions">
                         <ThemeToggle />
-                        <WalletButton />
+                        <WalletConnect />
                     </div>
                 </div>
             </nav>
             {children}
         </div>
-    );
-}
-
-function WalletButton() {
-    return (
-        <button className="btn btn-primary" id="wallet-connect-btn">
-            Connect Wallet
-        </button>
     );
 }

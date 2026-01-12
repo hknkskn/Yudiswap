@@ -1,34 +1,62 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowDown, Settings, ChevronDown, X } from "lucide-react";
+import { ArrowDown, Settings, ChevronDown, X, Loader2 } from "lucide-react";
+import { useWalletStore } from "@/lib/wallet-store";
+import { SUPRA_CONFIG } from "@/lib/config";
 
-// Demo tokens
-const TOKENS = [
-    { symbol: "SUPRA", name: "Supra Token", icon: "S", balance: "0.00" },
-    { symbol: "USDC", name: "USD Coin", icon: "U", balance: "0.00" },
-    { symbol: "USDT", name: "Tether USD", icon: "T", balance: "0.00" },
-    { symbol: "ETH", name: "Ethereum", icon: "E", balance: "0.00" },
-];
+// Token type
+interface Token {
+    symbol: string;
+    name: string;
+    icon: string;
+    balance: string;
+    decimals: number;
+    address: string;
+}
+
+// Demo tokens with config
+const TOKENS: Token[] = SUPRA_CONFIG.TOKENS.map(t => ({
+    ...t,
+    balance: "0.00"
+}));
 
 export default function SwapPage() {
     const pathname = usePathname();
+    const { isConnected, address, connect } = useWalletStore();
+
     const [fromToken, setFromToken] = useState(TOKENS[0]);
-    const [toToken, setToToken] = useState<typeof TOKENS[0] | null>(null);
+    const [toToken, setToToken] = useState<Token | null>(null);
     const [fromAmount, setFromAmount] = useState("");
+    const [toAmount, setToAmount] = useState("");
     const [showTokenModal, setShowTokenModal] = useState<"from" | "to" | null>(null);
+    const [isSwapping, setIsSwapping] = useState(false);
+    const [slippage, setSlippage] = useState("0.5");
+
+    // Calculate output amount (placeholder - would use contract)
+    useEffect(() => {
+        if (fromAmount && toToken && parseFloat(fromAmount) > 0) {
+            // Placeholder calculation - in real app this would call the contract
+            const mockRate = 1.5; // Mock exchange rate
+            setToAmount((parseFloat(fromAmount) * mockRate).toFixed(6));
+        } else {
+            setToAmount("");
+        }
+    }, [fromAmount, toToken]);
 
     const handleSwapDirection = () => {
         if (toToken) {
             const temp = fromToken;
             setFromToken(toToken);
             setToToken(temp);
+            setFromAmount(toAmount);
+            setToAmount(fromAmount);
         }
     };
 
-    const selectToken = (token: typeof TOKENS[0]) => {
+    const selectToken = (token: Token) => {
         if (showTokenModal === "from") {
             if (toToken?.symbol === token.symbol) {
                 setToToken(fromToken);
@@ -41,6 +69,40 @@ export default function SwapPage() {
             setToToken(token);
         }
         setShowTokenModal(null);
+    };
+
+    const handleSwap = async () => {
+        if (!isConnected) {
+            await connect();
+            return;
+        }
+
+        if (!fromAmount || !toToken) return;
+
+        setIsSwapping(true);
+        try {
+            // TODO: Call executeSwap from contract-service
+            console.log("Swapping", fromAmount, fromToken.symbol, "for", toToken.symbol);
+
+            // Simulate transaction delay
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            // Reset form on success
+            setFromAmount("");
+            setToAmount("");
+        } catch (error) {
+            console.error("Swap failed:", error);
+        } finally {
+            setIsSwapping(false);
+        }
+    };
+
+    const getButtonText = () => {
+        if (!isConnected) return "Connect Wallet";
+        if (!toToken) return "Select a token";
+        if (!fromAmount) return "Enter an amount";
+        if (isSwapping) return "Swapping...";
+        return "Swap";
     };
 
     return (
@@ -76,16 +138,18 @@ export default function SwapPage() {
                         <span className="token-input-label">You pay</span>
                         <span className="token-balance">
                             Balance: {fromToken.balance}
-                            <span className="token-balance-max">MAX</span>
+                            <span className="token-balance-max" onClick={() => setFromAmount(fromToken.balance)}>MAX</span>
                         </span>
                     </div>
                     <div className="token-input-row">
                         <input
-                            type="text"
+                            type="number"
                             className="token-amount-input"
                             placeholder="0"
                             value={fromAmount}
                             onChange={(e) => setFromAmount(e.target.value)}
+                            min="0"
+                            step="any"
                         />
                         <button
                             className="token-selector"
@@ -96,7 +160,7 @@ export default function SwapPage() {
                             <ChevronDown size={16} />
                         </button>
                     </div>
-                    <div className="token-input-usd">$0.00</div>
+                    <div className="token-input-usd">≈ $0.00</div>
                 </div>
 
                 {/* Swap Arrow */}
@@ -119,6 +183,7 @@ export default function SwapPage() {
                             type="text"
                             className="token-amount-input"
                             placeholder="0"
+                            value={toAmount}
                             readOnly
                         />
                         <button
@@ -136,29 +201,31 @@ export default function SwapPage() {
                             <ChevronDown size={16} />
                         </button>
                     </div>
-                    <div className="token-input-usd">$0.00</div>
+                    <div className="token-input-usd">≈ $0.00</div>
                 </div>
 
                 {/* Swap Info */}
-                {fromAmount && toToken && (
+                {fromAmount && toToken && parseFloat(fromAmount) > 0 && (
                     <div className="swap-info">
                         <div className="swap-info-row">
                             <span className="swap-info-label">Rate</span>
                             <span className="swap-info-value">
-                                1 {fromToken.symbol} = -- {toToken.symbol}
+                                1 {fromToken.symbol} ≈ 1.5 {toToken.symbol}
                             </span>
                         </div>
                         <div className="swap-info-row">
                             <span className="swap-info-label">Price Impact</span>
-                            <span className="swap-info-value">0.00%</span>
+                            <span className="swap-info-value" style={{ color: "#22c55e" }}>{"<0.01%"}</span>
                         </div>
                         <div className="swap-info-row">
-                            <span className="swap-info-label">Min. Received</span>
-                            <span className="swap-info-value">-- {toToken.symbol}</span>
+                            <span className="swap-info-label">Slippage</span>
+                            <span className="swap-info-value">{slippage}%</span>
                         </div>
                         <div className="swap-info-row">
                             <span className="swap-info-label">Fee (0.3%)</span>
-                            <span className="swap-info-value">-- {fromToken.symbol}</span>
+                            <span className="swap-info-value">
+                                {(parseFloat(fromAmount) * 0.003).toFixed(6)} {fromToken.symbol}
+                            </span>
                         </div>
                     </div>
                 )}
@@ -166,9 +233,11 @@ export default function SwapPage() {
                 {/* Swap Button */}
                 <button
                     className="btn btn-primary swap-button"
-                    disabled={!fromAmount || !toToken}
+                    disabled={isConnected && (!fromAmount || !toToken || isSwapping)}
+                    onClick={handleSwap}
                 >
-                    {!toToken ? "Select a token" : !fromAmount ? "Enter an amount" : "Connect Wallet"}
+                    {isSwapping && <Loader2 size={20} className="animate-spin" />}
+                    {getButtonText()}
                 </button>
             </div>
 
