@@ -27,22 +27,24 @@ export default function Features() {
     return (
         <section className="features" id="features">
             <div className="container">
-                <div className="features-header">
+                <div className="features-header" style={{ textAlign: "center", marginBottom: "4rem" }}>
                     <h2>Why <span className="gradient-text">YudiSwap</span>?</h2>
-                    <p>Built for traders who demand the best performance and security.</p>
+                    <p style={{ color: "var(--text-secondary)", fontSize: "1.125rem" }}>
+                        Built for traders who demand the best performance and security.
+                    </p>
                 </div>
 
                 <div className="features-grid">
                     {features.map((feature, index) => (
                         <div
                             key={index}
-                            className="card animate-fade-in-up"
+                            className="feature-card animate-fade-in-up"
                             style={{ animationDelay: `${index * 0.1}s` }}
                         >
                             <div className="feature-icon">
                                 {feature.icon}
                             </div>
-                            <h4 className="feature-title">{feature.title}</h4>
+                            <h3>{feature.title}</h3>
                             <p>{feature.description}</p>
                         </div>
                     ))}

@@ -12,21 +12,21 @@ export default function Footer() {
                     <span className="gradient-text">YudiSwap</span>
                 </div>
 
-                <div className="footer-links">
-                    <Link href="#" className="footer-link" aria-label="Twitter">
+                <div className="footer-socials">
+                    <Link href="#" className="social-link" aria-label="Twitter">
                         <Twitter size={20} />
                     </Link>
-                    <Link href="#" className="footer-link" aria-label="Discord">
+                    <Link href="#" className="social-link" aria-label="Discord">
                         <MessageCircle size={20} />
                     </Link>
-                    <Link href="#" className="footer-link" aria-label="GitHub">
+                    <Link href="#" className="social-link" aria-label="GitHub">
                         <Github size={20} />
                     </Link>
                 </div>
 
-                <p style={{ color: "var(--text-muted)", fontSize: "0.875rem" }}>
+                <div className="footer-bottom">
                     © 2026 YudiSwap. Built on Supra Network.
-                </p>
+                </div>
             </div>
         </footer>
     );

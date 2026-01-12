@@ -21,7 +21,7 @@ export default function Hero() {
                 </p>
 
                 <div className="hero-buttons">
-                    <Link href="/dex" className="btn btn-primary">
+                    <Link href="/app" className="btn btn-primary">
                         Launch App
                         <ArrowRight size={20} />
                     </Link>

@@ -110,14 +110,14 @@ export default function SwapPage() {
             {/* Tabs */}
             <div className="dex-tabs">
                 <Link
-                    href="/dex"
-                    className={`dex-tab ${pathname === "/dex" ? "active" : ""}`}
+                    href="/app"
+                    className={`dex-tab ${pathname === "/app" ? "active" : ""}`}
                 >
                     Swap
                 </Link>
                 <Link
-                    href="/dex/pool"
-                    className={`dex-tab ${pathname === "/dex/pool" ? "active" : ""}`}
+                    href="/app/pool"
+                    className={`dex-tab ${pathname === "/app/pool" ? "active" : ""}`}
                 >
                     Pool
                 </Link>

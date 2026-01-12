@@ -1,10 +1,15 @@
-"use client";
+
 
 import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
 import WalletConnect from "@/components/WalletConnect";
 import { Zap } from "lucide-react";
-import "./dex.css";
+import "./app.css";
+
+export const metadata = {
+    title: "Swap | YudiSwap App",
+    description: "Swap tokens instantly on Supra Network with ultra-low fees.",
+};
 
 export default function DexLayout({
     children,

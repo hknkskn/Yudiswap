@@ -15,7 +15,7 @@ export default function Navbar() {
 
                 <div className="navbar-actions">
                     <ThemeToggle />
-                    <Link href="/dex" className="btn btn-primary">
+                    <Link href="/app" className="btn btn-primary">
                         Launch App
                     </Link>
                 </div>

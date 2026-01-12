@@ -11,9 +11,9 @@ export default function Stats() {
             <div className="container">
                 <div className="stats-grid">
                     {stats.map((stat, index) => (
-                        <div key={index} className="animate-fade-in-up" style={{ animationDelay: `${index * 0.1}s` }}>
-                            <div className="stat-value">{stat.value}</div>
-                            <div className="stat-label">{stat.label}</div>
+                        <div key={index} className="stat-item animate-fade-in-up" style={{ animationDelay: `${index * 0.1}s` }}>
+                            <h3>{stat.value}</h3>
+                            <p>{stat.label}</p>
                         </div>
                     ))}
                 </div>
